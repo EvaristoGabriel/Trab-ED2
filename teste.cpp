@@ -15,13 +15,13 @@
 using namespace std;
 using namespace std::chrono;
 
-struct Avaliacao
+struct Registro
 {
-    char *review_id = new char[89]; // posição 0 a 89
-    char *review_text = new char[500];
-    char *upvotes = new char[7];
-    char *app_version = new char[6];
-    char *posted_date = new char[19]; // posição length - 19 a length
+    char id[100]; 
+    char review[1000];
+    char upvotes[10];
+    char version[20];
+    char data[20];
 };
 
 int ehNum(char c)
@@ -32,47 +32,6 @@ int ehNum(char c)
         return 1;
     else
         return 0;
-}
-
-// Funcao que remove virgulas do campo review_id quando começa com aspas
-string removeVirgula(string str)
-{
-    // Quando o review_text contem virgulas, o campo comeca com aspas.
-    // Desta forma, sempre que comecar com aspas vou retirar as virgulas de dentro do campo
-
-    int asp = 0; // contador de aspas duplas
-
-    // i comeca no 90, assim nao perde tempo percorrendo o review_id
-    for (int i = 90; str[i] != '\0'; i++)
-    {
-        if (str[i] == '\"')
-        {
-            if (str[i] == ',')
-                str[i] = ' ';
-        }
-        else if (str[i] == '\"')
-            break;
-    }
-
-    return str;
-}
-
-string removeQuebraLinha(string str)
-{
-    // Funcao que localiza e, se houver, remove carriage return e quebra de linha
-
-    for (int i = 0; str[i] != '\0'; i++)
-    {
-        if (str[i] == '\r' && str[i + 1] == '\n')
-        {
-            str[i] = ' ';
-            str[i + 1] = ' ';
-        }
-        else if (str[i] == '\n')
-            str[i] = ' ';
-    }
-
-    return str;
 }
 
 void leArquivoCsv()
