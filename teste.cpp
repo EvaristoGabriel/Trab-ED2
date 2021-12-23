@@ -405,16 +405,16 @@ int main()
     srand((unsigned)time(NULL));
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
 
-    /* ifstream inFile("tiktok_app_reviews.csv");
+    ifstream inFile("tiktok_app_reviews.csv");
     ofstream outFile("reduzido.csv");
 
-    int bufSize = 10000;
+    int bufSize = 10000000;
     char *buffer = new char[bufSize];
 
     inFile.read(buffer,bufSize);
     outFile.write(buffer,bufSize);
 
-    delete [] buffer; */
+    delete [] buffer;
 
 
     //ifstream csv("tiktok_app_reviews.csv");
@@ -433,7 +433,7 @@ int main()
 
     //menuPrincipal();  
     //acessaRegistro(2825393);
-leArquivoCsv();
+    //leArquivoCsv();
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     cout << duration_cast<duration<double>>(fim - inicio).count() << " segundos" << endl;
 
