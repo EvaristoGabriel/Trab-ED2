@@ -1,4 +1,5 @@
 #include "Ordenacao.cpp" 
+#include "Arvore.cpp"
 
 using namespace std;
 using namespace std::chrono;
@@ -17,6 +18,7 @@ void Processamento()
     ifstream csv("tiktok_app_reviews.csv");
     ofstream bin("tiktok_app_reviews.bin",ios::binary);
     ofstream upvotes("Upvotes.txt",ios::out);
+    ofstream version("Versao.txt",ios::out);
 
     Registro teste;
     int bufSize = 100000000;
@@ -45,7 +47,6 @@ void Processamento()
                         bin.write(&buffer[ini], 89);
                         break;
                     case 1:
-                        
                         bin.write(reinterpret_cast<const char *>(&textIdx), sizeof(int));
                         textBin.write(reinterpret_cast<const char *>(&textSize), sizeof(int));
                         textBin.write(&buffer[ini], textSize);
@@ -58,10 +59,11 @@ void Processamento()
                         upvotes<< "\n";
                         break;
                     case 3:
-                       /*  strncpy(app, &buffer[ini], textSize);
-                        app[textSize] = '\0'; */
                         bin.write(&buffer[ini], 20);
+                        version.write(&buffer[ini],7);
+                        version << "\n";
                         break;
+                        
                     case 4:
                         bin.write(&buffer[ini], 19);
                         break;
@@ -78,7 +80,13 @@ void Processamento()
                     if (buffer[pos + 1] != '"')
                     {
                         if (buffer[pos + 1] == ',')
-                            inreviewtext = false;
+                        {
+                            if(buffer[pos+2] == '0' || buffer[pos+2] == '1' || buffer[pos+2] == '2' || buffer[pos+2] == '3' ||
+                            buffer[pos+2] == '4' || buffer[pos+2] == '5' || buffer[pos+2] == '6' || buffer[pos+2] == '7' ||
+                            buffer[pos+2] == '8' || buffer[pos+2] == '9')
+                                inreviewtext = false;
+                        }
+                            
                         else
                             inreviewtext = true;
                     }

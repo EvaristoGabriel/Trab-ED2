@@ -1,16 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <chrono>
-#include <cstdlib>
-#include <ctime>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "Arvore.h"
 
-using namespace std;
-using namespace std::chrono;
+template <typename T>
+void ImprimirVetor(T *vet, int n, ofstream &saida){
+    saida << "Vetor ordenado: ";
+    for(int i = 0; i<n; i++)
+        saida << vet[i] << " ";
+}
 
 template <typename T>
 void troca(T &a, T &b)
@@ -83,12 +78,15 @@ void QuickSortRec(T *v, int ini, int fim)
 template <typename T>
 void QuickSort(T *v, int n, ofstream &saida)
 {
+    saida << "Quick Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     QuickSortRec(v, 0, n - 1);
-    saida << "Tempo Quick Sort: ";
+    saida << "Tempo: ";
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+    ImprimirVetor(v,n,saida);
+    saida << endl << endl;
 }
 
 template <typename T>
@@ -129,13 +127,16 @@ void HeapSortRec(T *v, int n)
 
 template <typename T>
 void HeapSort(T *v, int n, ofstream &saida)
-{
+{   
+    saida << "Heap Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     HeapSortRec(v, n);
-    saida << "Tempo Heap Sort: ";
+    saida << "Tempo: ";
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+    ImprimirVetor(v,n,saida);
+    saida << endl << endl;
 }
 
 int getProxGap(int gap)
@@ -149,6 +150,7 @@ int getProxGap(int gap)
 template <typename T>
 void CombSort(T *vet, int n, ofstream &saida)
 {
+    saida << "Comb Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     int gap = n;
     bool troca = true;
@@ -165,8 +167,17 @@ void CombSort(T *vet, int n, ofstream &saida)
             }
         }
     }
-    saida << "Tempo Comb Sort: ";
+    saida << "Tempo: ";
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+    ImprimirVetor(vet,n,saida);
+    saida << endl << endl;
 }
+
+
+
+
+
+
+
