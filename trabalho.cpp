@@ -1,6 +1,14 @@
-#include "Ordenacao.cpp" 
-#include "Arvore.cpp"
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Ordenacao.cpp"
 using namespace std;
 using namespace std::chrono;
 
@@ -9,7 +17,7 @@ struct Registro
     char id[90];
     char review[1000];
     int upvotes;
-    char version[20];
+    char version[10];
     char data[20];
 };
 
@@ -45,27 +53,37 @@ void Processamento()
                     {
                     case 0:
                         bin.write(&buffer[ini], 89);
+                        upvotes.write(&buffer[ini],89);
+                        upvotes << ",";
                         break;
                     case 1:
                         bin.write(reinterpret_cast<const char *>(&textIdx), sizeof(int));
                         textBin.write(reinterpret_cast<const char *>(&textSize), sizeof(int));
                         textBin.write(&buffer[ini], textSize);
+                        upvotes.write(reinterpret_cast<const char *>(&textSize), sizeof(int));
+                        upvotes.write(&buffer[ini], textSize);
                         textIdx += textSize + sizeof(int);
                         break;
                     case 2:
+                        upvotes << ",";
                         val = atoi(&buffer[ini]);
                         bin.write(reinterpret_cast<const char *>(&val), sizeof(int));
                         upvotes << val;
-                        upvotes<< "\n";
+                        upvotes<< ",";
                         break;
                     case 3:
-                        bin.write(&buffer[ini], 20);
-                        version.write(&buffer[ini],7);
-                        version << "\n";
+                        //pos - ini + 1 -> o tamanho
+                        char versao[20];
+                        strncpy(versao,&buffer[ini], pos -ini +1);
+                        bin.write(versao, 10);
+                        upvotes.write(versao,10);
+                        upvotes << ",";
                         break;
                         
                     case 4:
                         bin.write(&buffer[ini], 19);
+                        upvotes.write(&buffer[ini], 19);
+                        upvotes << "\n";
                         break;
                     }
                     
@@ -75,24 +93,26 @@ void Processamento()
             }
             else
             {
-                if (buffer[pos] == '"')
+                if (buffer[pos] == '"' && !inreviewtext)
                 {
+                    inreviewtext = true;
+                }
+                else if(buffer[pos] == '"'){
                     if (buffer[pos + 1] != '"')
                     {
-                        if (buffer[pos + 1] == ',')
+                        if (buffer[pos + 1] == ',' )
                         {
-                            if(buffer[pos+2] == '0' || buffer[pos+2] == '1' || buffer[pos+2] == '2' || buffer[pos+2] == '3' ||
-                            buffer[pos+2] == '4' || buffer[pos+2] == '5' || buffer[pos+2] == '6' || buffer[pos+2] == '7' ||
-                            buffer[pos+2] == '8' || buffer[pos+2] == '9')
-                                inreviewtext = false;
+                            inreviewtext = false;
                         }
-                            
-                        else
-                            inreviewtext = true;
                     }
+                    else {
+                        pos++;
+                    }
+
                 }
             }
         }
+
         csv.read(buffer, bufSize);
     }
     delete[] buffer;
@@ -320,7 +340,7 @@ int main()
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     
     Processamento();
-    menuPrincipal();
+    //menuPrincipal();
 
    
     high_resolution_clock::time_point fim = high_resolution_clock::now();

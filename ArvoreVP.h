@@ -1,4 +1,4 @@
-#ifndef ARVORE_H_INCLUDED
+#ifndef ARVOREVP_H_INCLUDED
 #include "NoVP.h"
 
 #define RED 1
@@ -19,9 +19,5 @@ class ArvoreVP{
         int Insere(ArvoreVP* raiz, int valor);
         bool Busca(int valor);
 };
-
-
-
-
 
 #endif

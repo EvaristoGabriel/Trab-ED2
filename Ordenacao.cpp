@@ -1,4 +1,4 @@
-#include "Arvore.h"
+#include "ArvoreVP.h"
 
 template <typename T>
 void ImprimirVetor(T *vet, int n, ofstream &saida){
