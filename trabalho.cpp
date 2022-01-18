@@ -23,8 +23,10 @@ struct Registro
 
 void Processamento()
 {
-    ifstream csv("tiktok_app_reviews.csv");
-    ofstream bin("tiktok_app_reviews.bin",ios::binary);
+   /*  ifstream csv("tiktok_app_reviews.csv");
+    ofstream bin("tiktok_app_reviews.bin",ios::binary); */
+     ifstream csv("reduzido.csv");
+    ofstream bin("reduzido.bin",ios::binary);
     ofstream upvotes("Upvotes.txt",ios::out);
     ofstream version("Versao.txt",ios::out);
 
@@ -53,37 +55,29 @@ void Processamento()
                     {
                     case 0:
                         bin.write(&buffer[ini], 89);
-                        upvotes.write(&buffer[ini],89);
-                        upvotes << ",";
                         break;
                     case 1:
                         bin.write(reinterpret_cast<const char *>(&textIdx), sizeof(int));
                         textBin.write(reinterpret_cast<const char *>(&textSize), sizeof(int));
                         textBin.write(&buffer[ini], textSize);
-                        upvotes.write(reinterpret_cast<const char *>(&textSize), sizeof(int));
-                        upvotes.write(&buffer[ini], textSize);
                         textIdx += textSize + sizeof(int);
                         break;
                     case 2:
-                        upvotes << ",";
                         val = atoi(&buffer[ini]);
                         bin.write(reinterpret_cast<const char *>(&val), sizeof(int));
                         upvotes << val;
-                        upvotes<< ",";
+                        upvotes<< "\n";
                         break;
                     case 3:
-                        //pos - ini + 1 -> o tamanho
                         char versao[20];
                         strncpy(versao,&buffer[ini], pos -ini +1);
                         bin.write(versao, 10);
-                        upvotes.write(versao,10);
-                        upvotes << ",";
+                        version.write(versao,10);
+                        version << "\n";
                         break;
                         
                     case 4:
                         bin.write(&buffer[ini], 19);
-                        upvotes.write(&buffer[ini], 19);
-                        upvotes << "\n";
                         break;
                     }
                     
@@ -139,18 +133,19 @@ int numLinhas(ifstream &inFile)
 
 void acessaRegistroI(int option,int save){
 
-    ifstream bin("tiktok_app_reviews.bin", ios::binary);
+    //ifstream bin("tiktok_app_reviews.bin", ios::binary);
+    ifstream bin("reduzido.bin", ios::binary);
     ifstream textBin("reviews.bin", ios::binary);
 
     bin.seekg(0, ios::beg);
-    int size = 2*sizeof(int) +130;
+    int size = 2*sizeof(int) +120;
     bin.seekg(option * size, ios::beg);
     Registro reg;
     int dText, textSize;
     bin.read((char *)(&reg.id), 89);
     bin.read((char *)(&dText), sizeof(int));
     bin.read((char *)(&reg.upvotes), sizeof(int));
-    bin.read((char *)(&reg.version), 20);
+    bin.read((char *)(&reg.version), 9);
     bin.read((char *)(&reg.data), 19);
     textBin.seekg(dText, ios::beg);
     textBin.read((char *)(&textSize), sizeof(int));
@@ -182,11 +177,14 @@ void acessaRegistroI(int option,int save){
 void testeImportacao()
 {
     int num = 0;
+    int n;
 
     ifstream inFile;
-    inFile.open("tiktok_app_reviews.csv");
-
+    //inFile.open("tiktok_app_reviews.csv");
+    inFile.open("reduzido.csv");
     int lin = numLinhas(inFile);
+    
+    inFile.close();
 
     do
     {
@@ -201,9 +199,9 @@ void testeImportacao()
         {
             // saida no console, n = 10
 
-            int n;      // contador do numero de registros
+            n = 10;// contador do numero de registros
 
-            for (n = 0; n < 10; n++)
+            for (int i = 0; i < n; i++)
             {
                 acessaRegistroI(rand() % lin,1);
             }
@@ -212,9 +210,9 @@ void testeImportacao()
         {
             // saida no arquivo, n = 100
 
-            int n; // contador do numero de registros
+            n = 100; // contador do numero de registros
 
-            for (n = 0; n < 100; n++)
+            for (int i = 0; i < n; i++)
                 acessaRegistroI(rand() % lin,2);
 
             cout << "Arquivo gerado com sucesso!" << endl;
@@ -243,7 +241,7 @@ void PegaLinha(int *v, int i, int numlinhas)
         getline(inFile, linha);
         if (j + 1 == numaleatorio)
         {
-            v[i] = atoi(linha.c_str());
+            v[i] = stoi(linha);
             break;
         }
         j++;
@@ -289,21 +287,16 @@ void menuPrincipal()
 
     case 3:
     {
-        /* O módulo de teste deve permitir a realização de algumas operações para garantir que as funções básicas do programa entregam resultados corretos sob quantidades menores de registros.
-        Esse módulo deve conter funções para escrever as saídas em um arquivo teste.txt das seguintes operações:
-        O resultado de cada um dos algoritmos de ordenação.
-        O resultado das versões do app mais frequentes
-        Para estes testes, considere a ordenação de N=100 reviews aleatórios. */
         int M = 0;
         ifstream arq("Upvotes.txt");
         ofstream saida("Saida.txt",ios::out);
         int numlinhas = numLinhas(arq);
         while (M < 1)
         {
-            saida << "Para M = "<< M << ": "<<endl;
+            saida << "Para M = "<< M+1 << ": "<<endl;
 
             // Utilizando N = 5.000
-            int N = 100;
+            int N = 500000;
             int *vetQ = new int[N];
             int *vetH = new int[N];
             int *vetC = new int[N];
@@ -311,17 +304,22 @@ void menuPrincipal()
             for (int i = 0; i < N; i++)
             {
                 PegaLinha(vetQ,i,numlinhas);
+                cout << i << " ";
                 vetH[i] = vetQ[i];
                 vetC[i] = vetQ[i];
             }
 
-            QuickSort(vetQ, N,saida);
+            double tempoQ, tempoH, tempoC;
+            tempoQ = QuickSort(vetQ, N,saida);
 
-            HeapSort(vetH, N,saida);
+            tempoH = HeapSort(vetH, N,saida);
 
-            CombSort(vetC, N,saida);
+            tempoC = CombSort(vetC, N,saida);
 
-            //mediat = *(mediaq + mediah + mediac)/3;
+            double mediatempos = (tempoQ + tempoH + tempoC)/3;
+
+            saida << "A media de tempos para M = " << M+1 << " é de " << mediatempos << "segundos"<<endl<<endl;
+
 
             M++;
         }
@@ -339,8 +337,16 @@ int main()
     srand((unsigned)time(NULL));
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     
+    /* ifstream inFile("tiktok_app_reviews.csv");
+    ofstream outFile("reduzido.csv");
+    int bufSize = 100000000;
+    char *buffer = new char[bufSize];
+    inFile.read(buffer,bufSize);
+    outFile.write(buffer,bufSize);
+    delete [] buffer; */
+
     Processamento();
-    //menuPrincipal();
+    menuPrincipal();
 
    
     high_resolution_clock::time_point fim = high_resolution_clock::now();
