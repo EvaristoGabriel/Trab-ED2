@@ -64,13 +64,14 @@ int particiona(T *v, int ini, int fim)
 }
 
 template <typename T>
-void QuickSortRec(T *v, int ini, int fim)
+void QuickSortRec(T *v, int ini, int fim,double &mov)
 {
     if (ini < fim)
     {   
         int p = particiona(v, ini, fim);
-        QuickSortRec(v, ini, p - 1);
-        QuickSortRec(v, p + 1, fim);
+        mov++;
+        QuickSortRec(v, ini, p - 1,mov);
+        QuickSortRec(v, p + 1, fim,mov);
         return;
     }
 }
@@ -81,13 +82,15 @@ double QuickSort(T *v, int n, ofstream &saida)
     saida << "Quick Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     
-
-    QuickSortRec(v, 0, n - 1);
+    double movimentos =0;
+    QuickSortRec(v, 0, n - 1,movimentos);
     
     saida << "Tempo: ";
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+
+    saida << "Movimentos: " << movimentos <<endl;
 
     //ImprimirVetor(v,n,saida);
     saida << endl << endl;
@@ -119,11 +122,13 @@ void constroiHeap(T *v, int n)
 }
 
 template <typename T>
-void HeapSortRec(T *v, int n)
+void HeapSortRec(T *v, int n, double &mov)
 {
+    
     constroiHeap(v, n);
     while (n > 0)
     {
+        mov++;
         troca(v[0], v[n - 1]);
         Heapify(v, 0, n - 1);
         n--;
@@ -133,13 +138,17 @@ void HeapSortRec(T *v, int n)
 template <typename T>
 double HeapSort(T *v, int n, ofstream &saida)
 {   
+    double movimento =0;
     saida << "Heap Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
-    HeapSortRec(v, n);
+    HeapSortRec(v, n,movimento);
     saida << "Tempo: ";
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+
+    saida << "Movimentos: " << movimento <<endl;
+
     //ImprimirVetor(v,n,saida);
     saida << endl << endl;
     return tempo;
@@ -156,6 +165,7 @@ int getProxGap(int gap)
 template <typename T>
 double CombSort(T *vet, int n, ofstream &saida)
 {
+    double movimento =0;
     saida << "Comb Sort: "<<endl;
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     int gap = n;
@@ -170,6 +180,7 @@ double CombSort(T *vet, int n, ofstream &saida)
             {
                 swap(vet[i], vet[i + gap]);
                 troca = true;
+                movimento++;
             }
         }
     }
@@ -177,6 +188,7 @@ double CombSort(T *vet, int n, ofstream &saida)
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     double tempo = duration_cast<duration<double>>(fim - inicio).count();
     saida << tempo << " segundos" << endl;
+    saida << "Movimentos: " << movimento <<endl;
     //ImprimirVetor(vet,n,saida);
     saida << endl << endl;
     return tempo;

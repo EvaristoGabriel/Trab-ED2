@@ -11,15 +11,13 @@ using namespace std;
 class ArvoreB{
     private:
         NoB* raiz;
-        int ordem;
-        int totalChaves;
+        int grau; //grau minimo
         
     public:
-        ArvoreB();
-        void inserir(int chave, NoB* no, int nivelDoNo, NoB* filhoEsquerda, NoB* filhoDireita);
-        void cria(int m);
-        NoB* buscar(int chave);
-        NoB* auxbuscar(int chave, int *nivelNo);
+        ArvoreB(int k);
+        void atravessarNos();
+        NoB* busca(int k);
+        void inserir(int val);
 };
 
 #endif

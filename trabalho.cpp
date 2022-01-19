@@ -23,7 +23,7 @@ struct Registro
 
 void Processamento()
 {
-   /*  ifstream csv("tiktok_app_reviews.csv");
+    /* ifstream csv("tiktok_app_reviews.csv");
     ofstream bin("tiktok_app_reviews.bin",ios::binary); */
      ifstream csv("reduzido.csv");
     ofstream bin("reduzido.bin",ios::binary);
@@ -137,36 +137,44 @@ void acessaRegistroI(int option,int save){
     ifstream bin("reduzido.bin", ios::binary);
     ifstream textBin("reviews.bin", ios::binary);
 
-    bin.seekg(0, ios::beg);
-    int size = 2*sizeof(int) +120;
-    bin.seekg(option * size, ios::beg);
-    Registro reg;
-    int dText, textSize;
-    bin.read((char *)(&reg.id), 89);
-    bin.read((char *)(&dText), sizeof(int));
-    bin.read((char *)(&reg.upvotes), sizeof(int));
-    bin.read((char *)(&reg.version), 9);
-    bin.read((char *)(&reg.data), 19);
-    textBin.seekg(dText, ios::beg);
-    textBin.read((char *)(&textSize), sizeof(int));
-    textBin.read((char *)(&reg.review), textSize);
+    if(bin.is_open() && textBin.is_open()){
 
-    if(save == 1){
-        cout << "Id: " << reg.id << endl;
-        cout << "Review Text: " << reg.review << endl;
-        cout << "Upvotes: " << reg.upvotes << endl;
-        cout << "Version: " << reg.version << endl;
-        cout << "Data : " << reg.data <<endl;
+        bin.seekg(0, ios::beg);
+
+        int size = 2*sizeof(int) +117;
+        bin.seekg(option * size, ios::beg);
+        
+        Registro reg;
+
+        int dText, textSize;
+        bin.read((char *)(&reg.id), 89);
+        bin.read((char *)(&dText), sizeof(int));
+        bin.read((char *)(&reg.upvotes), sizeof(int));
+        bin.read((char *)(&reg.version), 9);
+        bin.read((char *)(&reg.data), 19);
+
+        textBin.seekg(dText, ios::beg);
+        textBin.read((char *)(&textSize), sizeof(int));
+        textBin.read((char *)(&reg.review), textSize);
+
+        if(save == 1){
+            cout << "Id: " << reg.id << endl;
+            /* cout << "Review Text: " << reg.review << endl;
+            cout << "Upvotes: " << reg.upvotes << endl;
+            cout << "Version: " << reg.version << endl;
+            cout << "Data : " << reg.data <<endl; */
+        }
+        else{
+            ofstream import ("Importacao.txt",ios::out);
+            import << reg.id << ",";
+            import << reg.review << ",";
+            import << reg.upvotes << ",";
+            import << reg.version << ",";
+            import << reg.data <<endl;
+        } 
     }
-    else{
-        ofstream import ("Importacao.txt",ios::out);
-        import << reg.id << ",";
-        import << reg.review << ",";
-        import << reg.upvotes << ",";
-        import << reg.version << ",";
-        import << reg.data <<endl;
-    }
-    
+    else
+        cout << "Não foi possível abrir os arquivos!!";
 
     bin.close();
     textBin.close();
@@ -296,7 +304,7 @@ void menuPrincipal()
             saida << "Para M = "<< M+1 << ": "<<endl;
 
             // Utilizando N = 5.000
-            int N = 500000;
+            int N = 100;
             int *vetQ = new int[N];
             int *vetH = new int[N];
             int *vetC = new int[N];
@@ -304,7 +312,6 @@ void menuPrincipal()
             for (int i = 0; i < N; i++)
             {
                 PegaLinha(vetQ,i,numlinhas);
-                cout << i << " ";
                 vetH[i] = vetQ[i];
                 vetC[i] = vetQ[i];
             }
@@ -348,6 +355,7 @@ int main()
     Processamento();
     menuPrincipal();
 
+   
    
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     cout << duration_cast<duration<double>>(fim - inicio).count() << " segundos" << endl;

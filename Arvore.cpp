@@ -106,124 +106,38 @@ bool ArvoreVP::auxBusca(NoVP *p, int valor){
         return auxBusca(p->getDir(),valor);
 }
 
-void ArvoreB::cria(int m){
-    ordem = m;
-    raiz = NULL;
+NoB::NoB(int t, bool folha){
+    grau = t;
+    ehfolha = folha;
+
+    chaves = new int [2*grau - 1];
+    filhos = new NoB* [2*t];
+
     totalChaves = 0;
 }
 
-/* void ArvoreB::inserir(int chave, NoB* no, int nivelDoNo, NoB* filhoAEsquerda, NoB* filhoADireita)
-     {    
-          
-          if(raiz == NULL){  
+int NoB::buscaChave(int k){
+    int index = 0;
+    while(index < totalChaves && chaves[index] < k)
+        ++index;
+    return index;
+}
 
-              raiz = (NoB*) malloc(sizeof(NoB)); 
-              
-              if(!raiz->cria(ordem, nivelDoNo == -1)){
-                  cout << "\nMemoria insuficiente!" << endl;
-                  cin.get();
-                  return;
-              }
-              
-              raiz->adicionaChave(chave);
-              
-              if(filhoAEsquerda != NULL && filhoADireita != NULL){                  
-                  raiz->adicionaFilho(filhoAEsquerda, 0);
-                  raiz->adicionaFilho(filhoADireita, 1);
-                  
-                  filhoAEsquerda->setAscendente(raiz);
-                  filhoADireita->setAscendente(raiz);
-              }
-              
-          }else{
-                
-                // Pega a posição que a chave foi inserida no no
-                int posicao = no->adicionaChave(chave);
-                
-                if(filhoADireita != NULL){  
-                   // A partir da posição que a chave foi inserida, insere o ponteiro a sua direita  
-                   filhoADireita->setAscendente(no);
-                   no->adicionaFilho(filhoADireita, posicao + 1);
-                }
-                
-               
-               
-               // Condição para deslocamento e divisão do no
-               if(no->getNumeroDeChaves() == ordem){
-                   
-                   // Divide o no                                      
-                   NoB **novosFilhos = no->divideFilhos(); // guarda os filhos do novo no(se existirem)
-                   int *novasChaves = no->divideChaves(); // guarda as chaves do novo no
-                   int newNumberOfKeys = ordem - no->getNumeroDeChaves();
-                   
-                   // Cria um novo no
-                   NoB* novoNo;
-                   
-                   novoNo = (NoB*) malloc(sizeof(NoB)); 
-                   
-				   if(!novoNo->cria(ordem, no->ehfolha())){
-					  cout << "\nMemoria insuficiente!" << endl;
-					  cin.get();
-					  return;
-				   }
-				   
-				   // ajusta os ponteiros			   
-				   novoNo->setIrmaoADireita(no->getIrmaoADireita());
-				   novoNo->setIrmaoAEsquerda(no);
-				   
-				   if(no->getIrmaoADireita() != NULL)
-					  no->getIrmaoADireita()->setIrmaoAEsquerda(novoNo);
-					  
-				   no->setIrmaoADireita(novoNo);	
-				   
-				   
-				   
-                   // Adiciona as chaves no novo no
-                   for(int i = 0; i < newNumberOfKeys; i++)
-                       novoNo->adicionaChave(novasChaves[i]);
-                   
-				   free(novasChaves);
-				   
-                   // Se não for uma folha, adiciona os ponteiros que foram separados do no velho
-                   if(novosFilhos != NULL){
-                                  
-                       NoB* f = NULL;
-                                 
-                       // Adiciona os ponteiros  
-                       for(int i=0; i < newNumberOfKeys + 1; i++){  
-                           f = novosFilhos[i];        
-                           f->setAscendente(novoNo);
-                           novoNo->adicionaFilho(f, i);
-						   novosFilhos[i] = NULL;
-                       }
-                         
-                       f = NULL;
-                       
-                       // limpa da memória
-                       free(novosFilhos);
-                   }
-                      
-                   
-                   
-               
-               
-                   // Pega a chave que vai subir e a retira do no
-                   int chavePromovida = no->retiraUltimaChave();                       
-                   
-                   // Define os ponteiros para o novo elemento que vai subir
-                   filhoAEsquerda = no == raiz ? no : NULL; 
-                   filhoADireita = novoNo;              
-                   
-                   if(no == raiz){
-                       raiz = NULL; // o elemento a ser reinserido será a nova raiz 
-                       no = NULL;
-                   }else
-                       no = no->getAscendente();
-                       
-                   // Reinsere o elemento no nivel acima do que ele estava 
-                   inserir(chavePromovida, no, nivelDoNo - 1, filhoAEsquerda, filhoADireita);         
-               } 
-               
-          }           
-        
-     }  */
+ArvoreB::ArvoreB(int k){
+    raiz = NULL;
+    grau = k;
+}
+
+void ArvoreB::atravessarNos(){
+    if(raiz != NULL)
+        raiz->atravessarNo();
+}
+
+NoB* ArvoreB::busca(int k){
+    return (raiz == NULL) ? NULL : raiz->busca(k);
+}
+
+void ArvoreB::inserir(int val)
+{    
+       
+} 
