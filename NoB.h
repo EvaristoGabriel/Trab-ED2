@@ -7,15 +7,13 @@
 #include <iostream>
 using namespace std;
 
-class NoB{
-    private:
+class NoB{  
+    public:
         bool ehfolha;       //indica se o no é uma folha
         int totalChaves;    //numero atual de chaves
         int grau;           //grau maximo
         int *chaves;        //lista de chaves         
         NoB **filhos;       //matrix de ponteiro para os filhos 
-
-    public:
         NoB(int t, bool leaf);
         void atravessarNo();
         NoB* busca(int k);
@@ -27,10 +25,11 @@ class NoB{
         void removedeNonFolha(int index);
         int getpredecessor(int index);
         int getsucessor(int index);
-        int preencher(int index);
+        void preencher(int index);
         void pegarEsquerda(int index);
         void pegarDireita(int index);
         void juntar(int index);
+
 };
 
 #endif
