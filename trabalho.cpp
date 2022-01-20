@@ -21,12 +21,18 @@ struct Registro
     char data[20];
 };
 
+struct Hash
+{
+    int qtd = 0; // Quantidade de aparições da versão
+    char version[10]; // app_version
+};
+
 void Processamento()
 {
-    /* ifstream csv("tiktok_app_reviews.csv");
-    ofstream bin("tiktok_app_reviews.bin",ios::binary); */
-     ifstream csv("reduzido.csv");
-    ofstream bin("reduzido.bin",ios::binary);
+    ifstream csv("tiktok_app_reviews.csv");
+    ofstream bin("tiktok_app_reviews.bin",ios::binary);
+    /*ifstream csv("reduzido.csv");
+    ofstream bin("reduzido.bin",ios::binary);*/
     ofstream upvotes("Upvotes.txt",ios::out);
     ofstream version("Versao.txt",ios::out);
 
@@ -199,7 +205,7 @@ void testeImportacao()
         cout << "Menu do teste de importacao:" << endl;
         cout << "Digite 1 - Para exibir a saida no console" << endl;
         cout << "Digite 2 - Para exibir a saida em um arquivo importacao.txt" << endl;
-        cout << "digite 3 - Para finalizar o programa" << endl;
+        cout << "Digite 3 - Para finalizar o programa" << endl;
 
         cin >> num;
 
@@ -256,6 +262,7 @@ void PegaLinha(int *v, int i, int numlinhas)
     } 
 }
 
+
 void menuPrincipal()
 {
     /* O programa deve oferecer ao usuário um menu para permitir a escolha de qual etapa será executada:
@@ -270,6 +277,7 @@ void menuPrincipal()
     cout << "1 - Acessar i-esimo registro" << endl;
     cout << "2 - Importacao" << endl;
     cout << "3 - Ordenacao" << endl;
+    cout << "4 - Hash" << endl;
     cout << "Qualquer outro para sair do programa!"<<endl;
     cout << "Digite: ";
 
@@ -334,6 +342,100 @@ void menuPrincipal()
         break;
     }
 
+    case 4: // Tabela Hash com o app_version incompleta
+    {
+        int N = 0, // Número de reviews que será armazenado na tabela
+            M = 0; // Quantidade de impressões com as maiores frequências
+
+        int n = 0, // Representa quantas versões já foi armazenada
+            m = 0; // Representa quantas linhas já foram impressas
+
+    // Leitura das variáveis N e M:
+
+        cout << "Determine a quantidade de reviews para armazenar: ";
+        cin >> N;
+
+        while (N <= 0)
+        {
+            cout << "Valor invalido, digite novamente: ";
+            cin >> N;
+        }
+
+        cout << "Determine a quantidade de versoes mais frequentes para imprimir: ";
+        cin >> M;
+        while (M <= 0)
+        {
+            cout << "Valor invalido, digite novamente: ";
+            cin >> M;
+        }
+
+        ifstream inFile("Versao.txt");
+        int numLin = numLinhas(inFile); // Armazenar o numero de linhas do arquivo
+
+    // Fazer a importação das N linhas:
+
+        Hash hash[N];
+        string str;
+        bool igual = true;
+
+        // Transformar isso em uma funçao posteriormente:
+        while (!inFile.eof() && n < N)
+        {
+            //1. Pegar uma linha
+            getline (inFile, str);
+
+            //2. Verificar se a versao já foi armazenada
+            if (n == 0)
+            {
+                int i;
+
+                for (i = 0; str[i] != '\0'; i++)
+                    hash[n].version[i] = str[i];
+                hash[n].version[i] = '\0';
+
+                hash[n].qtd++;
+                n++;
+            }
+            else
+            {
+                int i;
+                for (i = 0; i < n; i++)
+                {
+                    for (int j = 0; str[j] != '\0'; j++)
+                    {
+                        if (hash[i].version[j] == str[j])
+                            igual = true;
+                        else
+                        {
+                            igual = false;
+                            break;
+                        }
+                    }
+
+                    if (igual == true) // versoes iguais, apenas incrementar o qtd
+                    {
+                        hash[i].qtd++;
+                        n++;
+                    }    
+                    else // versoes diferentes, incrementar o qtd e armazenar a versao
+                    {
+                        int j;
+                        for (j = 0; str[j] != '\0'; j++)
+                            hash[i].version[j] = str[j];
+                        hash[i].version[j] = '\0';
+
+                        hash[i].qtd++;
+                        n++;
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
     default:
         break;
     }
@@ -344,6 +446,7 @@ int main()
     srand((unsigned)time(NULL));
     high_resolution_clock::time_point inicio = high_resolution_clock::now();
     
+    //Gerar um arquivo reduzido:
     /* ifstream inFile("tiktok_app_reviews.csv");
     ofstream outFile("reduzido.csv");
     int bufSize = 100000000;
@@ -352,10 +455,10 @@ int main()
     outFile.write(buffer,bufSize);
     delete [] buffer; */
 
-    Processamento();
+
+    //Processamento();
     menuPrincipal();
 
-   
    
     high_resolution_clock::time_point fim = high_resolution_clock::now();
     cout << duration_cast<duration<double>>(fim - inicio).count() << " segundos" << endl;
